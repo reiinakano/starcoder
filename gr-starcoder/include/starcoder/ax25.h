@@ -200,29 +200,25 @@ static inline size_t ax25_prepare_frame(uint8_t *out, const uint8_t *info,
   memset(out, AX25_SYNC_FLAG, preamble_len);
   i = preamble_len;
 
-  /* Insert address and control fields */
-  if (addr_len == AX25_MIN_ADDR_LEN || addr_len == AX25_MAX_ADDR_LEN) {
-    memcpy(out + i, addr, addr_len);
-    i += addr_len;
-  } else {
-    return 0;
-  }
+  // TODO: Hack to support customer.
+  // TODO: Remove this hack.
+  out[i++] = 0x9c;
+  out[i++] = 0x9e;
+  out[i++] = 0x86;
+  out[i++] = 0x82;
+  out[i++] = 0x99;
+  out[i++] = 0x98;
+  out[i++] = 0x60;
+  out[i++] = 0x86;
+  out[i++] = 0xa2;
+  out[i++] = 0x40;
+  out[i++] = 0x40;
+  out[i++] = 0x40;
+  out[i++] = 0x0e;
+  out[i++] = 0x1e;
+  out[i++] = 0x03;
+  out[i++] = 0xf0;
 
-  if (ctrl_len == AX25_MIN_CTRL_LEN || ctrl_len == AX25_MAX_CTRL_LEN) {
-    memcpy(out + i, &ctrl, ctrl_len);
-    i += ctrl_len;
-  } else {
-    return 0;
-  }
-
-  /*
-   * Set the PID depending the frame type.
-   * FIXME: For now, only the "No layer 3 is implemented" information is
-   * inserted
-   */
-  if (type == AX25_I_FRAME || type == AX25_UI_FRAME) {
-    out[i++] = 0xF0;
-  }
   memcpy(out + i, info, info_len);
   i += info_len;
 
